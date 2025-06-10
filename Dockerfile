@@ -8,7 +8,8 @@ RUN dotnet restore
 
 # Copiar el resto del código y compilar
 COPY . ./
-RUN dotnet publish -c Release -o out
+RUN dotnet publish AnalizadorOpiniones.csproj -c Release -o out
+
 
 # Imagen base para runtime
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
