@@ -1,23 +1,22 @@
-# Imagen base para construir
+# Etapa de build
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-# Copiar todo el contenido del proyecto al contenedor
-COPY . ./
+# Copiar todos los archivos
+COPY . .
 
-# Restaurar dependencias y publicar en modo Release
-RUN dotnet restore
-RUN dotnet publish AnalizadorOpiniones.csproj -c Release -o /app/out
+# Restaurar dependencias
+RUN dotnet restore "AnalizadorOpiniones.csproj"
 
-# Imagen base para runtime
+# Publicar
+RUN dotnet publish "AnalizadorOpiniones.csproj" -c Release -o /app/publish
+
+# Etapa de runtime
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 
-# Copiar los archivos publicados desde la fase de build
-COPY --from=build /app/out .
+# Copiar salida publicada
+COPY --from=build /app/publish .
 
-# Puerto que expone la aplicación
 EXPOSE 80
-
-# Comando para arrancar la app
 ENTRYPOINT ["dotnet", "AnalizadorOpiniones.dll"]
